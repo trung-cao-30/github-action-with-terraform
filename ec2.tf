@@ -5,4 +5,5 @@ resource "aws_instance" "ec2" {
   # iam_instance_profile = 
   subnet_id              = "subnet-0870dc3ac621b22e0"
   vpc_security_group_ids = [aws_security_group.ec2.id]
+  user_data = "${file("user_data.sh")}"
 }
