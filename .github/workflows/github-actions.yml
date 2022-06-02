@@ -1,13 +1,19 @@
 name: GitHub Actions and Terraform
 on: [push]
+
+env:
+  AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
 jobs:
   deploy:
-
+    name: Install terraform and apply
     runs-on: ubuntu-latest
     steps:
-      - name: Install Terraform
-        run: |
-          cd /usr/bin
-          curl -s -qL -o terraform.zip https://releases.hashicorp.com/terraform/1.2.2/terraform_1.2.2_linux_amd64.zip
-          unzip -o terraform.zip
-         
+      - run: cd /usr/bin
+      - run: curl -s -qL -o terraform.zip https://releases.hashicorp.com/terraform/1.2.2/terraform_1.2.2_linux_amd64.zip
+      - run: unzip -o terraform.zip
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: terraform init -no-color
+      - run: terraform apply -auto-approve -var="access_key=$AWS_ACCESS_KEY_ID" -var="secret_key=$AWS_SECRET_ACCESS_KEY"
